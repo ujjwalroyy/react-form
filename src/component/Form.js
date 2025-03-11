@@ -1,92 +1,70 @@
-import React, { useEffect, useState } from 'react'
-import Display from './Display'
+import React, { useEffect, useRef, useState } from 'react'
+import Display from './Display';
 
 const Form = () => {
-  const [selectedValue, setSelectedValue] = useState('PCM')
-  const [userName, setUserName] = useState('')
-  const [age, setAge] = useState('')
-  const [email, setEmail] = useState('')
-  const [gender, setGender] = useState('select')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [subject, setSubject] = useState(new Map())
-  const [file, setFile] = useState()
-  const [sub, setSub] = useState('')
-  const [myData, setMyData] = useState([])
+  const [selectedValue, setSelectedValue] = useState('');
+  const [userName, setUserName] = useState('');
+  const [age, setAge] = useState('');
+  const [email, setEmail] = useState('');
+  const [gender, setGender] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [subject, setSubject] = useState(new Map());
+  const [file, setFile] = useState(null);
+  const [sub, setSub] = useState('');
+  const fileInputRef = useRef(null);
+  const genderInputRef = useRef()
 
-  let data = {
-    "username": userName,
-    "email": email,
-    "gender": gender,
-    "age": age,
-    "stream": selectedValue,
-    "file": file,
-    "subject": [...subject]
-  }
+  const data = {
+    username: userName,
+    email,
+    gender,
+    age,
+    stream: selectedValue,
+    file,
+    subject: [...subject],
+  };
 
+  const handleRadioChange = (val) => setSelectedValue(val);
 
-  function handleRadioChange(val) {
-    setSelectedValue(val)
-  }
+  const handleNameChange = (val) => {
+    setUserName(val.target.value);
+    document.getElementById('username-error').style.display = 'none';
+  };
 
-  function handleNameChange(val) {
-    // console.log("Username Val ", val.target.value);
-    setUserName(val.target.value)
-    let usernameError = document.getElementById("username-error")
-    usernameError.style.display = "none"
-  }
-
-  function handleAgeChange(val) {
-    let ageVal = val.target.value
-    // console.log("Age Val", ageVal);
+  const handleAgeChange = (val) => {
+    const ageVal = val.target.value;
     if (/^\d*$/.test(ageVal)) {
-      setAge(ageVal)
-      // console.log("Age", age);
+      setAge(ageVal);
     }
-    let ageCheck = document.getElementById("age-error")
-    if (age > 16) {
-      ageCheck.style.display = 'none'
+    const ageCheck = document.getElementById('age-error');
+    if (parseInt(ageVal, 10) > 16) {
+      ageCheck.style.display = 'none';
     }
-  }
-  function handleEmailChange(val) {
-    setEmail(val.target.value)
-    let emailCheck = document.getElementById("email-error")
-    emailCheck.style.display = 'none'
-  }
-  function handlePasswordChange(val) {
-    setPassword(val.target.value)
-    let passCheck = document.getElementById("password-error")
-    passCheck.style.display = 'none'
+  };
 
-  }
-  function handleConfirmPasswordChange(val) {
-    setConfirmPassword(val.target.value)
-    let comPass = document.getElementById("cPassword-error")
-    comPass.style.display = "none"
-  }
+  const handleEmailChange = (val) => {
+    setEmail(val.target.value);
+    document.getElementById('email-error').style.display = 'none';
+    document.getElementById('duplicate-error').style.display = 'none';
+  };
+
+  const handlePasswordChange = (val) => {
+    setPassword(val.target.value);
+    document.getElementById('password-error').style.display = 'none';
+  };
+
+  const handleConfirmPasswordChange = (val) => {
+    setConfirmPassword(val.target.value);
+    document.getElementById('cPassword-error').style.display = 'none';
+  };
 
   const checkOption = [
-    {
-      name: "physics ",
-      key: "physics",
-      label: "Physics"
-    },
-    {
-      name: "chemistry ",
-      key: "chemistry",
-      label: "Chemistry"
-    },
-    {
-      name: "math ",
-      key: "math",
-      label: "Math"
-    },
-    {
-      name: "bio",
-      key: "bio",
-      label: "Bio"
-    },
-  ]
+    { name: 'physics', key: 'physics', label: 'Physics' },
+    { name: 'chemistry', key: 'chemistry', label: 'Chemistry' },
+    { name: 'math', key: 'math', label: 'Math' },
+    { name: 'bio', key: 'bio', label: 'Biology' },
+  ];
 
   const updateMap = (key, value) => {
     setSubject((map => {
@@ -102,130 +80,88 @@ const Form = () => {
       // new Map(map.set(key, value))
     ))
   }
+
   const handleProfilePic = (val) => {
-    setFile(val.target.files[0])
-    // console.log("File ", file);
+    console.log("Val---------------", val.target.value);
 
-    // console.log("ProfilePic: ", val.target.files[0].name);
-    // console.log("URL.createObjectURL(val.target.files[0] ", URL.createObjectURL(val.target.files[0]));
+    const file = val.target.value
+    setFile(file)
 
   }
-  const handleSubjectChange = (val) => {
-    updateMap(val.target.name, val.target.checked);
-    // console.log("subject: ", subject);
-  }
-  function validateUserName(username) {
-    let validUserName = /^[a-z0-9]+$/i;
-    let usernameError = document.getElementById("username-error")
+
+  const handleSubjectChange = (val) => updateMap(val.target.name, val.target.checked);
+
+  const validateUserName = (username) => {
+    const validUserName = /^[a-z0-9]+$/i;
+    const usernameError = document.getElementById('username-error');
     if (!validUserName.test(username)) {
-      usernameError.style.display = "block"
+      usernameError.style.display = 'block';
       return false;
     }
-    else {
-      return true;
-    }
-  }
-  function comparePassword(password, confirmPassword) {
-    let comPass = document.getElementById("cPassword-error")
+    return true;
+  };
+
+  const comparePassword = (password, confirmPassword) => {
+    const comPass = document.getElementById('cPassword-error');
     if (password !== confirmPassword) {
-      comPass.style.display = "block"
+      comPass.style.display = 'block';
       return false;
     }
-    else {
-      return true;
-    }
-  }
-  function handleGenderChange(val) {
-    let ageErr = document.getElementById('gender-error')
+    return true;
+  };
+
+  const handleGenderChange = (val) => {
+    console.log(val, "-");
+
+    const genderError = document.getElementById('gender-error');
     if (val === 'select') {
-      setGender(val)
-      ageErr.style.display = 'block'
+      setGender(val);
+      genderError.style.display = 'block';
       return false;
     }
-    else {
-      ageErr.style.display = 'none'
-      setGender(val)
-      return true
-    }
-  }
+    genderError.style.display = 'none';
+    setGender(val);
+    return true;
+  };
 
-  function validateLocalEmail(email) {
-    let duplicateEmailCheck = document.getElementById('duplicate-error')
-    let user = JSON.parse(localStorage.getItem("data"))
-    let emailExist = user.some(obj => obj.email === email)
-    if(emailExist){
-      duplicateEmailCheck.style.display = 'block'
-    }
-    else{
-      duplicateEmailCheck.style.display = 'none'
-    }
-    return emailExist
+  const validateLocalEmail = (email) => {
+    const duplicateEmailCheck = document.getElementById('duplicate-error');
+    const user = JSON.parse(localStorage.getItem('data')) || [];
+    const emailExist = user.some((obj) => obj.email === email);
+    duplicateEmailCheck.style.display = emailExist ? 'block' : 'none';
+    return emailExist;
+  };
 
-    // temp.forEach((val) =>{
-    //   console.log("Local----", val.email, "Email-------", email);
-
-    //   if (val.email === email) {
-    //     console.log("Val.Email ---- ", val.email, "-----------------", email);
-
-    //     duplicateEmailCheck.style.display = 'block'
-    //     return false;
-    //   }
-    //   else {
-    //     console.log("Val.Email Else ---- ", val.email, "----------------------", email);
-    //     duplicateEmailCheck.style.display = 'none'
-    //     setEmail(email)
-    //     console.log(email);
-
-    //     return true
-    //   }
-
-    // })
-
-  }
-  // useEffect(() => {
-  //   validateLocalEmail(email)
-  // }, [email])
-  function validateEmail(email) {
-    let validEmail = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
-    let emailCheck = document.getElementById("email-error")
+  const validateEmail = (email) => {
+    const validEmail = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+    const emailCheck = document.getElementById('email-error');
     if (!validEmail.test(email)) {
-      emailCheck.style.display = 'block'
+      emailCheck.style.display = 'block';
       return false;
     }
-    else {
-      return true;
-    }
-  }
+    return true;
+  };
 
-  // function validateSubject(subject){
-  //   let subjectCheck = document.getElementById("subject-error")
-  //   if(subject.length()){
-  //     subjectCheck.style.display = "block"
-  //   }
-  // }
+  const validateAge = (age) => {
+    const ageCheck = document.getElementById('age-error');
+    if (parseInt(age, 10) < 16) {
+      ageCheck.style.display = 'block';
+      return false;
+    }
+    ageCheck.style.display = 'none';
+    return true;
+  };
 
-  function validateAge(age) {
-    let ageCheck = document.getElementById("age-error")
-    if (age < 16) {
-      ageCheck.style.display = 'block'
-      return false
-    }
-    else {
-      ageCheck.style.display = 'none'
-      return true;
-    }
-  }
-  function validatePassword(password) {
-    let validPass = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/
-    let passCheck = document.getElementById("password-error")
+  const validatePassword = (password) => {
+    const validPass = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+    const passCheck = document.getElementById('password-error');
     if (!validPass.test(password)) {
-      passCheck.style.display = 'block'
+      passCheck.style.display = 'block';
       return false;
     }
-    else {
-      return true;
-    }
-  }
+    return true;
+  };
+
   function submitFormHandler() {
     if (validateUserName(userName) && validateEmail(email) && validateAge(age)) {
       setSub('true')
@@ -240,8 +176,8 @@ const Form = () => {
     }
   }
 
-  const props = { userName, email, gender, age, selectedValue, file, sub, subject }
-  const genderOptions = ['select', 'Male', 'Female']
+  // const props = { userName, email, gender, age, selectedValue, file, sub, subject }
+  const genderOptions = ['Male', 'Female', 'Other']
 
 
   // const render = {
@@ -253,7 +189,7 @@ const Form = () => {
   //   file,
   //   subject
   // }
-  let cntInd = 0
+  // let cntInd = 0
   // function displayData() {
   //   temp.map(function (val, ind) {
   //     // console.log("Local----", val);
@@ -295,38 +231,42 @@ const Form = () => {
   //   // console.log("Temp ---- ", res);
   // }
 
-  function handleClear(){
-    setUserName('')
-    setGender('select')
-    console.log("gender ", gender);
-    
-    setAge('')
-    setEmail('')
-    setPassword('')
-    setConfirmPassword('')
-    setFile()
-    setSubject((map) => {
-      const newMap = new Map(map)
-      newMap.clear();
-      console.log("Map clear", newMap);
-      return newMap;
-    })
-    console.log("Map clear", subject);
-    
-    setSelectedValue('PCM')
-  }
-  
+  const handleClear = () => {
+    setUserName('');
+    // setGender('');
+    if(genderInputRef.current){
+      genderInputRef.current.value = ""
+    }
+    setAge('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setSubject(new Map());
+    setFile(null)
+    setSelectedValue('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+
   const storeData = (e) => {
-    e.preventDefault()
-    if (validateUserName(userName) && validateEmail(email) && validateAge(age) && validatePassword(password) && comparePassword(password, confirmPassword) && handleGenderChange(gender) && !validateLocalEmail(email)) {
-      setSub('true')
-      let arr = []
-      let user = JSON.parse(localStorage.getItem("data")) || arr
-      user.push(data)
-      localStorage.setItem('data', JSON.stringify(user))
-      handleClear()
-      
-      
+    e.preventDefault();
+    if (
+      validateUserName(userName) &&
+      validateEmail(email) &&
+      validateAge(age) &&
+      validatePassword(password) &&
+      comparePassword(password, confirmPassword) &&
+      handleGenderChange(gender) &&
+      !validateLocalEmail(email)
+    ) {
+      setSub('true');
+      const user = JSON.parse(localStorage.getItem('data')) || [];
+      user.push(data);
+      localStorage.setItem('data', JSON.stringify(user));
+      handleClear();
+      <Display/>
       console.log("Submited", validateUserName(userName));
       console.log("Submited", validateEmail(email));
       console.log("Submited", validateAge(age));
@@ -370,13 +310,14 @@ const Form = () => {
 
   return (
     <>
-      <form className='form-controller' name='user-form'>
+      <form className='form-controller' onSubmit={storeData}>
         <div>Username:
-          <input type='text' value={userName} onChange={handleNameChange} onInput={validateUserName} placeholder='Enter Username' minLength={6} maxLength={20} required />
+          <input type='text' value={userName} onChange={handleNameChange} onInput={validateUserName} placeholder='Enter Username' minLength={6} maxLength={20} />
           <span id='username-error' style={{ display: "none" }}>Enter valid username</span>
         </div><br />
         <div>Select Gender:
-          <select value={gender} onChange={(e) => handleGenderChange(e.target.value)} required>
+          <select ref={genderInputRef} onChange={(e) => handleGenderChange(e.target.value)}>
+            <option value={""} >select</option>
             {genderOptions.map((val, ind) => (
               <option key={ind}>{val}</option>
             ))}
@@ -384,11 +325,11 @@ const Form = () => {
           <span id='gender-error' style={{ display: "none" }}>Select your gender</span>
         </div><br />
         <div>Age:
-          <input type='text' value={age} onChange={handleAgeChange} onInput={validateAge} required />
+          <input type='text' value={age} onChange={handleAgeChange} onInput={validateAge} />
           <span id='age-error' style={{ display: "none" }}>Age must be greater than 16</span>
         </div><br />
         <div>Email:
-          <input type='email' value={email} onChange={handleEmailChange} onInput={validateEmail && validateLocalEmail} required />
+          <input type='text' value={email} onChange={handleEmailChange} onInput={validateEmail && validateLocalEmail} />
           <span id='email-error' style={{ display: "none" }}>Enter valid Email</span>
           <span id='duplicate-error' style={{ display: "none" }}>Email already exist</span>
         </div><br />
@@ -407,27 +348,28 @@ const Form = () => {
           {checkOption.map(it => (
             <label key={it.key}>
               {it.name}
-              <input type='checkbox' name={it.name} checked={subject.get(it.name)} onChange={handleSubjectChange} />
+              <input type='checkbox' name={it.name} checked={subject.get(it.name) ? true : false} onChange={handleSubjectChange} />
               <span id='subject-error' style={{ display: "none" }}>Enter valid password</span>
             </label>
           ))}
         </div>
         <div>Password:
-          <input type='password' value={password} onChange={handlePasswordChange} onInput={validatePassword} required />
+          <input type='text' value={password} onChange={handlePasswordChange} onInput={validatePassword} />
           <span id='password-error' style={{ display: "none" }}>Enter valid password</span>
         </div>
         <div>Confirm Password:
-          <input type='password' value={confirmPassword} onChange={handleConfirmPasswordChange} onInput={comparePassword} required />
+          <input type='text' value={confirmPassword} onChange={handleConfirmPasswordChange} onInput={comparePassword} />
           <span id='cPassword-error' style={{ display: "none" }}>password and confirm password not matched</span>
         </div>
         <div>Profile Photo:
-          <input type='file' onChange={handleProfilePic} required />
+          <input type='file' ref={fileInputRef} onChange={handleProfilePic} />
         </div>
+        <button>Submit</button>
       </form>
       <div>
-        <button onClick={(e) => storeData(e)}>Submit</button>
+        {/* <button>Submit</button> */}
+        {/* <button onClick={handleClear}>Clear</button> */}
       </div>
-
     </>
   )
 }
