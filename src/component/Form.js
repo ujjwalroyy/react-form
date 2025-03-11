@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Display from './Display';
+import { useNavigate } from 'react-router-dom';
 
 const Form = () => {
   const [selectedValue, setSelectedValue] = useState('');
@@ -14,6 +15,7 @@ const Form = () => {
   const [sub, setSub] = useState('');
   const fileInputRef = useRef(null);
   const genderInputRef = useRef()
+  const navigate = useNavigate()
 
   const data = {
     username: userName,
@@ -60,10 +62,10 @@ const Form = () => {
   };
 
   const checkOption = [
-    { name: 'physics', key: 'physics', label: 'Physics' },
-    { name: 'chemistry', key: 'chemistry', label: 'Chemistry' },
-    { name: 'math', key: 'math', label: 'Math' },
-    { name: 'bio', key: 'bio', label: 'Biology' },
+    { name: 'physics ', key: 'physics', label: 'Physics' },
+    { name: 'chemistry ', key: 'chemistry', label: 'Chemistry' },
+    { name: 'math ', key: 'math', label: 'Math' },
+    { name: 'biology ', key: 'bio', label: 'Biology' },
   ];
 
   const updateMap = (key, value) => {
@@ -176,60 +178,8 @@ const Form = () => {
     }
   }
 
-  // const props = { userName, email, gender, age, selectedValue, file, sub, subject }
   const genderOptions = ['Male', 'Female', 'Other']
 
-
-  // const render = {
-  //   userName,
-  //   email,
-  //   gender,
-  //   age,
-  //   selectedValue,
-  //   file,
-  //   subject
-  // }
-  // let cntInd = 0
-  // function displayData() {
-  //   temp.map(function (val, ind) {
-  //     // console.log("Local----", val);
-  //     // let res = Object.assign(data, val)
-  //     // console.log("Temp ---- ", val.stream);
-  //     myData.push({
-  //       id: cntInd++,
-  //       userName: val.username,
-  //       email: val.email,
-  //       gender: val.gender,
-  //       age: val.age,
-  //       selectedValue: val.stream,
-  //       file: val.file,
-  //       subject: val.subject
-  //     })
-  //     myData.map((item) => {
-  //       // console.log("Item content ", item);
-  //     })
-  //     // console.log("My Data -------- Data ---------", myData[0].email)
-  //     // console.log("render----", render.email);
-  //     // console.log("render----", render.userName);
-  //     // console.log("render----", render.age);
-  //     // console.log("render----", render.gender);
-  //     // console.log("render----", render.selectedValue);
-  //     // console.log("render----", render.file);
-  //     // console.log("render----", render.subject);
-
-  //     // for(let key in res){
-  //     //   console.log("Key---------", res[key]);
-
-  //     //   if(res.hasOwnProperty(key)){
-  //     //     console.log("res--------------", res[key]);
-
-  //     //   }
-  //     // }
-  //   }
-  //   )
-  //   // let res = Object.assign(data, temp)
-  //   // console.log("Temp ---- ", res);
-  // }
 
   const handleClear = () => {
     setUserName('');
@@ -266,7 +216,7 @@ const Form = () => {
       user.push(data);
       localStorage.setItem('data', JSON.stringify(user));
       handleClear();
-      <Display/>
+      navigate("/display")
       console.log("Submited", validateUserName(userName));
       console.log("Submited", validateEmail(email));
       console.log("Submited", validateAge(age));
@@ -347,7 +297,7 @@ const Form = () => {
         <div>Subject: {subject.get('physics')}
           {checkOption.map(it => (
             <label key={it.key}>
-              {it.name}
+              {it.label}
               <input type='checkbox' name={it.name} checked={subject.get(it.name) ? true : false} onChange={handleSubjectChange} />
               <span id='subject-error' style={{ display: "none" }}>Enter valid password</span>
             </label>
