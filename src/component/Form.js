@@ -62,10 +62,10 @@ const Form = () => {
   };
 
   const checkOption = [
-    { name: 'physics ', key: 'physics', label: 'Physics' },
-    { name: 'chemistry ', key: 'chemistry', label: 'Chemistry' },
-    { name: 'math ', key: 'math', label: 'Math' },
-    { name: 'biology ', key: 'bio', label: 'Biology' },
+    { name: 'Physics ', key: 'physics', label: 'Physics ' },
+    { name: 'Chemistry ', key: 'chemistry', label: 'Chemistry ' },
+    { name: 'Math ', key: 'math', label: 'Math ' },
+    { name: 'Biology ', key: 'bio', label: 'Biology ' },
   ];
 
   const updateMap = (key, value) => {

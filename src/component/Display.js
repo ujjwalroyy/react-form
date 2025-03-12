@@ -2,16 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 
 const Display = () => {
   const [userData, setUserData] = useState([]);
-  const statusRef = useRef()
   const [editInd, setEditInd] = useState(null);
   const [editData, setEditData] = useState({});
-  const genderInputRef = useRef()
-  const [subject, setSubject] = useState(new Map());
-
 
   useEffect(() => {
     const storedData = localStorage.getItem("data");
-    console.log("Rendered user");
     if (storedData) {
       setUserData(JSON.parse(storedData));
     }
@@ -31,9 +26,10 @@ const Display = () => {
   };
 
   const handleEdit = (ind) => {
-    console.log("Ind ", ind);
+    
     setEditInd(ind);
-    setEditData(userData[ind]);
+    console.log("Ind ", ind);
+    setEditData({...userData[ind]});
   };
 
   const printMap = () => {
@@ -42,33 +38,49 @@ const Display = () => {
     })
   }
 
-  const handleChange = (val) => {
-   
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    console.log("Name ", name);
+    console.log("Value ", value);
+    console.log("type ", type);
+    console.log("checked ", checked);
     
-    setEditData({...editData, [val.target.name] : val.target.value})    
-    console.log("val -----", val.target.name, "---------------", val.target.value);
-  }
 
-  const handleSave = () => {
-    console.log("Edit Data",editData);
-    const updatedData = [...userData]
-    console.log("Data ", editData);
-    console.log("Updated Data ", updatedData[editInd]);
-    
-    updatedData[editInd] = editData
-    console.log("Data Ind", updatedData);
-    setUserData(updatedData)
-    localStorage.setItem("data", JSON.stringify(updatedData))
-    setEditInd(null)
-    setEditData({})
-  }
+    if (type === "checkbox" ) {
+      setEditData((prevData) => ({
+        ...prevData,
+        subject: checked
+          ? [...(prevData.subject || []), value]
+          : (prevData.subject || []).filter((sub) => sub !== value),
+      }));
+      console.log("Edit Data---", editData.subject);
+      console.log("Edit Data 0000", editData.subject[0][0]);
+      console.log("Edit Data 1111", editData.subject[1][0]);
+      
+    } else {
+      setEditData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    const updatedData = [...userData];
+    updatedData[editInd] = editData;
+    setUserData(updatedData);
+    localStorage.setItem("data", JSON.stringify(updatedData));
+    setEditInd(null);
+    setEditData({});
+  };
 
   const mySearch = () => {
     let input = document.getElementById("myInput")
     let filter = input.value.toLowerCase();
     let tr = document.getElementsByTagName("tr")
-    let th = document.getElementsByTagName("thead")
-    for(let i = 0; i < tr.length; i++){
+    let th = document.getElementsByTagName("th")
+    for(let i = 1; i < tr.length; i++){
       let textVal = tr[i].textContent || tr[i].innerText
       if(textVal.toLowerCase().indexOf(filter) > -1){
         tr[i].style.display = "";
@@ -79,7 +91,8 @@ const Display = () => {
     }
   }
 
-  const genderOptions = ['Male', 'Female', 'Other']
+  const genderOptions = ["Male", "Female", "Other"];
+
 
 
   const validateUserName = (username) => {
@@ -93,10 +106,10 @@ const Display = () => {
   };
 
   const checkOption = [
-    { name: 'physics ', key: 'physics', label: 'Physics' },
-    { name: 'chemistry ', key: 'chemistry', label: 'Chemistry' },
-    { name: 'math ', key: 'math', label: 'Math' },
-    { name: 'biology ', key: 'bio', label: 'Biology' },
+    { name: 'Physics ', key: 'physics', label: 'Physics ' },
+    { name: 'Chemistry ', key: 'chemistry', label: 'Chemistry ' },
+    { name: 'Math ', key: 'math', label: 'Math ' },
+    { name: 'Biology ', key: 'bio', label: 'Biology ' },
   ];
 
   const validateAge = (age) => {
@@ -150,28 +163,41 @@ const Display = () => {
         <tbody>
         {userData.length > 0 ? (
           userData.map((user, ind) => (
-            <tr>
-              <td>{user.file ? <img src={user.file} alt="Profile Pic" /> : <p>No Profile Pic</p>}</td>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.gender}</td>
-              <td>{user.age}</td>
-              <td>{user.stream}</td>
-              <td>{user.subject ? user.subject : "None"}</td>
-              <td>
-                <select value={user.status || "Active"} onChange={(e) => handleStatusChange(ind, e.target.value)}>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </td>
-              <td>
-                <button onClick={() => handleEdit(ind)}>Update</button>
-                <button onClick={() => handleDelete(ind)}>Delete</button>
-              </td>
-            </tr>
+            <tr key={ind}>
+                <td>
+                  {user.file ? (
+                    <img src={user.file} alt="Profile Pic" />
+                  ) : (
+                    <p>No Profile Pic</p>
+                  )}
+                </td>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.gender}</td>
+                <td>{user.age}</td>
+                <td>{user.stream}</td>
+                <td>{user.subject ? user.subject : "None"}</td>
+                <td>
+                  <select
+                    value={user.status || "Active"}
+                    onChange={(e) => handleStatusChange(ind, e.target.value)}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </td>
+                <td>
+                  <button onClick={() => handleEdit(ind)}>Update</button>
+                  <button onClick={() => handleDelete(ind)}>Delete</button>
+                </td>
+              </tr>
           ))
         ) : (
-          <h1>No data available</h1>
+          <tr>
+              <td colSpan="9">
+                <h1>No data available</h1>
+              </td>
+            </tr>
         )}
         </tbody>
 
@@ -182,15 +208,17 @@ const Display = () => {
           <input type='text' name="username" value={editData.username} onChange={handleChange} onInput={validateUserName} placeholder='Enter Username' minLength={6} maxLength={20} />
           <span id='username-error' style={{ display: "none" }}>Enter valid username</span>
         </div><br />
-        <div>Select Gender:
-          <select ref={genderInputRef}  onChange={(e) => handleChange(e.target.value)}>
-            <option >select</option>
-            {genderOptions.map((val, ind) => (
-              <option name="gender" value={editData.gender} key={ind}>{val}</option>
-            ))}
-          </select>
-          <span id='gender-error' style={{ display: "none" }}>Select your gender</span>
-        </div><br />
+        <div>
+            Select Gender:
+            <select name="gender" value={editData.gender || ""} onChange={handleChange}>
+              <option value="">Select</option>
+              {genderOptions.map((val, ind) => (
+                <option key={ind} value={val}>
+                  {val}
+                </option>
+              ))}
+            </select>
+          </div><br />
         <div>Age:
           <input type='text' name="age" value={editData.age} onChange={handleChange} onInput={validateAge} />
           <span id='age-error' style={{ display: "none" }}>Age must be greater than 16</span>
@@ -200,21 +228,55 @@ const Display = () => {
           <span id='email-error' style={{ display: "none" }}>Enter valid Email</span>
           <span id='duplicate-error' style={{ display: "none" }}>Email already exist</span>
         </div><br />
-        <div>Stream:
-          <input type='radio' name="stream" value={editData.stream} checked={editData.stream === "PCM"} onChange={handleChange} />PCM
-          <input type='radio' name="stream" value={editData.stream} checked={editData.stream === "Commerce"} onChange={handleChange} />Commerce
-          <input type='radio' name="stream" value={editData.stream} checked={editData.stream === "Arts"} onChange={handleChange} />Arts
-        </div><br />
-        <div>Subject: {subject.get('physics')}
-          {checkOption.map(it => (
-            <label key={it.key}>
-              {it.label}
-              <input type='checkbox' name={it.name} checked={subject.get(it.name) ? true : false} onChange={handleChange} />
-              <span id='subject-error' style={{ display: "none" }}>Enter subject details</span>
+        <div>
+            Stream:
+            <label>
+              <input
+                type="radio"
+                name="stream"
+                value="PCM"
+                checked={editData.stream === "PCM"}
+                onChange={handleChange}
+              />
+              PCM
             </label>
-          ))}
-        </div>
-        <button>Update</button>
+            <label>
+              <input
+                type="radio"
+                name="stream"
+                value="Commerce"
+                checked={editData.stream === "Commerce"}
+                onChange={handleChange}
+              />
+              Commerce
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="stream"
+                value="Arts"
+                checked={editData.stream === "Arts"}
+                onChange={handleChange}
+              />
+              Arts
+            </label>
+          </div><br />
+          <div>
+            Subjects:
+            {checkOption.map((it) => (
+              <label key={it.key}>
+                {it.label}
+                <input
+                  type="checkbox"
+                  name={it.name}
+                  value={it.label}
+                  checked={(editData.subject || []).includes(it.label)}
+                  onChange={handleChange}
+                />
+              </label>
+            ))}
+          </div>
+        <button type="submit">Update</button>
       </form>
 
         // <div>
@@ -233,6 +295,4 @@ const Display = () => {
 };
 
 export default Display;
-
-
 
