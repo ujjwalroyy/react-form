@@ -47,24 +47,14 @@ const Display = () => {
     
 
     if (type === "checkbox" ) {
-      console.log("((((((((((((", userData[editInd].subject.length);
-      for(let i = 0; i < userData[editInd].subject.length; i++){
-        console.log("))))))))))))", userData[editInd].subject[i])
-        if(userData[editInd].subject[i].includes(value) == false ){
-          
-          setEditData((prevData) => ({
-            ...prevData,
-            subject: checked
-              ? [...(prevData.subject || []), value]
-              : (prevData.subject || []).filter((sub) => sub !== value),
-          }));
-        }
-      }
-      
+      setEditData((prevData) => ({
+        ...prevData,
+        subject: checked
+          ? [...(prevData.subject[editInd]), value]
+          : (prevData.subject[editInd]).filter((sub) => sub !== value),
+      }));
       console.log("Edit Data---", editData.subject);
-      // console.log("Edit Data 0000", editData.subject[0][0]);
-      // console.log("Edit Data 1111", editData.subject[1][0]);
-      
+
     } else {
       setEditData((prevData) => ({
         ...prevData,
@@ -278,7 +268,7 @@ const Display = () => {
                   type="checkbox"
                   name={it.name}
                   value={it.label}
-                  checked={(editData.subject || []).includes(it.label)}
+                  checked={(editData.subject).includes(it.label)}
                   onChange={handleChange}
                 />
               </label>
@@ -286,17 +276,6 @@ const Display = () => {
           </div>
         <button type="submit">Update</button>
       </form>
-
-        // <div>
-          
-        //   <input type="text" name="username" value={editData.username} onChange={handleChange} />
-        //   <input type="email" name="email" value={editData.email} onChange={handleChange} />
-        //   <input type="text" name="gender" value={editData.gender} onChange={handleChange} />
-        //   <input type="number" name="age" value={editData.age} onChange={handleChange} />
-        //   <input type="text" name="stream" value={editData.stream} onChange={handleChange}  />
-        //   <input type="text" name="subject" value={editData.subject} onChange={handleChange} />
-        //   <button onClick={handleSave}>Save</button>
-        // </div>
       )}
     </>
   );

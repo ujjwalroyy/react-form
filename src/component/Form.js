@@ -62,10 +62,10 @@ const Form = () => {
   };
 
   const checkOption = [
-    { name: 'Physics ', key: 'physics', label: 'Physics ' },
-    { name: 'Chemistry ', key: 'chemistry', label: 'Chemistry ' },
-    { name: 'Math ', key: 'math', label: 'Math ' },
-    { name: 'Biology ', key: 'bio', label: 'Biology ' },
+    { name: 'Physics ', key: 0, label: 'Physics ' },
+    { name: 'Chemistry ', key: 1, label: 'Chemistry ' },
+    { name: 'Math ', key: 2, label: 'Math ' },
+    { name: 'Biology ', key: 3, label: 'Biology ' },
   ];
 
   const updateMap = (key, value) => {
@@ -146,7 +146,7 @@ const Form = () => {
 
   const validateAge = (age) => {
     const ageCheck = document.getElementById('age-error');
-    if (parseInt(age, 10) < 16) {
+    if (parseInt(age, 10) < 16 && parseInt(age, 10) > 90) {
       ageCheck.style.display = 'block';
       return false;
     }
@@ -178,12 +178,11 @@ const Form = () => {
     }
   }
 
-  const genderOptions = ['Male', 'Female', 'Other']
+  const genderOptions = ['select','Male', 'Female', 'Other']
 
 
   const handleClear = () => {
     setUserName('');
-    // setGender('');
     if(genderInputRef.current){
       genderInputRef.current.value = ""
     }
@@ -267,7 +266,7 @@ const Form = () => {
         </div><br />
         <div>Select Gender:
           <select ref={genderInputRef} onChange={(e) => handleGenderChange(e.target.value)}>
-            <option value={""} >select</option>
+            {/* <option value={""} >select</option> */}
             {genderOptions.map((val, ind) => (
               <option key={ind}>{val}</option>
             ))}
@@ -276,7 +275,7 @@ const Form = () => {
         </div><br />
         <div>Age:
           <input type='text' value={age} onChange={handleAgeChange} onInput={validateAge} />
-          <span id='age-error' style={{ display: "none" }}>Age must be greater than 16</span>
+          <span id='age-error' style={{ display: "none" }}>Age must be greater than 16 and less than 90</span>
         </div><br />
         <div>Email:
           <input type='text' value={email} onChange={handleEmailChange} onInput={validateEmail && validateLocalEmail} />
@@ -299,7 +298,7 @@ const Form = () => {
             <label key={it.key}>
               {it.label}
               <input type='checkbox' name={it.name} checked={subject.get(it.name) ? true : false} onChange={handleSubjectChange} />
-              <span id='subject-error' style={{ display: "none" }}>Enter valid password</span>
+              <span id='subject-error' style={{ display: "none" }}>Select subject</span>
             </label>
           ))}
         </div>
