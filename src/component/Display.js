@@ -47,15 +47,23 @@ const Display = () => {
     
 
     if (type === "checkbox" ) {
-      setEditData((prevData) => ({
-        ...prevData,
-        subject: checked
-          ? [...(prevData.subject || []), value]
-          : (prevData.subject || []).filter((sub) => sub !== value),
-      }));
+      console.log("((((((((((((", userData[editInd].subject.length);
+      for(let i = 0; i < userData[editInd].subject.length; i++){
+        console.log("))))))))))))", userData[editInd].subject[i])
+        if(userData[editInd].subject[i].includes(value) == false ){
+          
+          setEditData((prevData) => ({
+            ...prevData,
+            subject: checked
+              ? [...(prevData.subject || []), value]
+              : (prevData.subject || []).filter((sub) => sub !== value),
+          }));
+        }
+      }
+      
       console.log("Edit Data---", editData.subject);
-      console.log("Edit Data 0000", editData.subject[0][0]);
-      console.log("Edit Data 1111", editData.subject[1][0]);
+      // console.log("Edit Data 0000", editData.subject[0][0]);
+      // console.log("Edit Data 1111", editData.subject[1][0]);
       
     } else {
       setEditData((prevData) => ({
