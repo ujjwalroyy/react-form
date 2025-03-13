@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 const Display = () => {
   const [userData, setUserData] = useState([]);
@@ -26,17 +26,11 @@ const Display = () => {
   };
 
   const handleEdit = (ind) => {
-    
     setEditInd(ind);
     console.log("Ind ", ind);
     setEditData({...userData[ind]});
   };
 
-  const printMap = () => {
-    userData.map((user, ind) => {
-        console.log("-----------", user.subject);
-    })
-  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -50,8 +44,8 @@ const Display = () => {
       setEditData((prevData) => ({
         ...prevData,
         subject: checked
-          ? [...(prevData.subject[editInd]), value]
-          : (prevData.subject[editInd]).filter((sub) => sub !== value),
+          ? [...(prevData.subject), value]
+          : (prevData.subject).filter((sub) => sub !== value),
       }));
       console.log("Edit Data---", editData.subject);
 
@@ -77,7 +71,6 @@ const Display = () => {
     let input = document.getElementById("myInput")
     let filter = input.value.toLowerCase();
     let tr = document.getElementsByTagName("tr")
-    let th = document.getElementsByTagName("th")
     for(let i = 1; i < tr.length; i++){
       let textVal = tr[i].textContent || tr[i].innerText
       if(textVal.toLowerCase().indexOf(filter) > -1){
@@ -164,7 +157,7 @@ const Display = () => {
             <tr key={ind}>
                 <td>
                   {user.file ? (
-                    <img src={user.file} alt="Profile Pic" />
+                    <img src={user.file} style={{maxWidth: "200px", }} alt="Profile Pic" />
                   ) : (
                     <p>No Profile Pic</p>
                   )}
