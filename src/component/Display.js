@@ -57,6 +57,38 @@ const Display = () => {
     }
   };
 
+  const handleChangeCheck = (e) => {
+    const { name, value, type, checked } = e.target;
+    console.log("Name ", name);
+    console.log("Value ", value);
+    console.log("type ", type);
+    console.log("checked ", checked);
+    let check = ''
+
+    if (type === "checkbox" ) {
+      for(let i = 0; i < userData[editInd].subject.length; i++){
+          if(typeof(userData[editInd].subject[i]) == 'object'){
+            console.log(i,"-----------", userData[editInd].subject[i][0]);
+            check = userData[editInd].subject[i][0]
+            console.log("Check ", check);
+          }
+      }    
+      setEditData((prevData) => ({
+        ...prevData,
+        subject: checked
+          ? [...(prevData.subject), value]
+          : (prevData.subject).filter((sub) => (sub !== value) && (sub !== check)),
+      }));
+      console.log("Edit Data---", editData.subject);
+
+    } else {
+      setEditData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
     const updatedData = [...userData];
@@ -262,7 +294,7 @@ const Display = () => {
                   name={it.name}
                   value={it.label}
                   checked={(editData.subject).includes(it.label)}
-                  onChange={handleChange}
+                  onChange={handleChangeCheck}
                 />
               </label>
             ))}
